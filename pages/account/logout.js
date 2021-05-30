@@ -1,16 +1,19 @@
-import MainLayout from '@layouts/main';
-import { PageHeader, Card, Button, Image } from 'antd';
-import Cookies from 'js-cookie';
+import axios from '@configs/api-request';
+import { Card, Form, Input, Button, Image, notification } from 'antd';
+import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router'
+import jwt from 'jsonwebtoken';
+import Cookies from 'js-cookie';
 
+function login() {
+  localStorage.setItem('appId', 0)
+  localStorage.setItem('unit', 'kim cương');
 
-export default function Example() {
   const route = useRouter();
-
   const logout = () => {
-    Cookies.remove('access_token');
-    route.push({ pathname: '/login' })
-  }
+    Cookies.remove('access-token')
+    route.push('/login')
+  };
 
   const style = {
     button: {
@@ -33,19 +36,16 @@ export default function Example() {
   }
 
   return (
-    <MainLayout>
-      <h3 style={style.header}>Đăng xuất</h3>
-      <Card style={style.card} className="mt-4">
-        <Image preview={false} src="/logout.svg" className="mt-3" width={100} />
-        <p style={style.txt} className="mt-5">Bạn có thực sự muốn Đăng xuất?</p>
-        <Button
-          type="primary"
-          shape="round"
-          style={style.button}
-          className="mr-5 mt-3 mb-3"
-          onClick={logout}>Có</Button>
-        <Button shape="round" style={style.button}>Không</Button>
-      </Card>
-    </MainLayout>
-  )
+    <Card style={{ width: '40%', marginTop: 100, margin: 'auto', textAlign: 'center' }}>
+      <Image preview={false} src="/logout.svg" className="mt-3" width={100} />
+      <p style={style.txt} className="mt-5">Xác nhận đăng xuất</p>
+      <Button
+        type="primary"
+        shape="round"
+        style={style.button}
+        onClick={logout}>OK</Button>
+    </Card>
+  );
 }
+
+export default login;

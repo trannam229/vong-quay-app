@@ -1,4 +1,0 @@
-{
-    "watch": [".babelrc", "server/**/*.js","configs/*.js"],
-    "ext": "js json"
-}

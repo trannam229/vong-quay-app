@@ -1,19 +1,30 @@
-import MainLayout from '@layouts/main';
-import { Card, Button, Form, Input, Image } from 'antd';
-import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
-import axios from '../../configs/api-request';
+import axios from '@configs/api-request';
+import { Card, Form, Input, Button, Image, notification } from 'antd';
+import { UserOutlined, LockOutlined } from '@ant-design/icons';
+import { useRouter } from 'next/router'
+import jwt from 'jsonwebtoken';
+import Cookies from 'js-cookie';
 
-export default function Example() {
+function login() {
+  localStorage.setItem('appId', 0)
+  localStorage.setItem('unit', 'kim cương');
+
+  const route = useRouter();
   const onFinish = async (values) => {
-    try {
-      const body = {
-        header: { Password: values.Password },
-        NewPassword: values.NewPassword,
-      };
+    if(values.newPassword != values.rePassword) {
+      notification.open({
+        type: 'error',
+        message: 'Đổi mật khẩu thất bại!',
+        description: 'Xác nhận lại mật khẩu mới.',
+      });
+      return;
+    }
 
-      await axios.post("/change-password", body);
+    try {
+      await axios.post('/user/changePassword', { newPassword: values.newPassword, oldPassword: values.oldPassword });
+      values = {};
     } catch (e) {
-      console.log(e.message);
+      console.log(e);
     }
   };
 
@@ -22,89 +33,56 @@ export default function Example() {
   };
 
   const style = {
-    button: {
-      width: 150,
-      height: 40,
-      fontSize: 16
-    },
-    txt: {
-      fontSize: 18
-    },
-    header: {
-      textAlign: 'center',
-      marginTop: '12px'
-    },
-    card: {
-      width: 450,
-      textAlign: 'center',
+    form: {
+      width: '70%',
       margin: '0 auto'
+    },
+    btnSubmit: {
+      margin: '0 auto',
+      marginTop: '0px',
+      display: 'block',
+      borderRadius: '20px',
+      paddingLeft: '20px',
+      paddingRight: '20px',
+      fontSize: '16px'
     }
   }
 
   return (
-    <MainLayout>
-      <h3 style={style.header}>Đổi mật khẩu</h3>
-      <Card style={style.card} className="mt-4 changepass-card">
-        <Image preview={false} src="/key.svg" className="changepass-img" width={180} />
-        <Form
-          layout="vertical"
-          onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
-          className=""
+    <Card style={{ width: '40%', marginTop: 100, margin: 'auto', textAlign: 'center' }}>
+      <Image preview={false} src="/key.svg" className="changepass-img" width={180} />
+      <Form
+        style={style.form}
+        name="basic"
+        initialValues={{ remember: true }}
+        onFinish={onFinish}
+        onFinishFailed={onFinishFailed}
+      >
+        <Form.Item
+          name="oldPassword"
+          rules={[{ required: true, message: 'Hãy nhập thông tin!' }]}
         >
-          <Form.Item
-            label="Mật khẩu hiện tại"
-            name="Password"
-            rules={[
-              {
-                required: true,
-                message: 'Bạn cần nhập giá trị',
-              },
-            ]}
-          >
-            <Input.Password iconRender={visible => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)} />
-          </Form.Item>
+          <Input.Password size="large" prefix={<LockOutlined />} placeholder="Mật khẩu hiện tại" />
+        </Form.Item>
+        <Form.Item
+          name="newPassword"
+          rules={[{ required: true, message: 'Hãy nhập thông tin!' }]}
+        >
+          <Input.Password size="large" prefix={<LockOutlined />} placeholder="Mật khẩu mới" />
+        </Form.Item>
+        <Form.Item
+          name="rePassword"
+          rules={[{ required: true, message: 'Hãy nhập thông tin!' }]}
+        >
+          <Input.Password size="large" prefix={<LockOutlined />} placeholder="Nhập lại mật khẩu mới" />
+        </Form.Item>
 
-          <Form.Item
-            label="Mật khẩu mới"
-            name="NewPassword"
-            rules={[
-              {
-                required: true,
-                message: 'Bạn cần nhập giá trị',
-              },
-            ]}
-          >
-            <Input.Password iconRender={visible => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)} />
-          </Form.Item>
-
-          <Form.Item
-            label="Nhập lại mật khẩu mới"
-            name="ReNewPassword"
-            dependencies={['NewPassword']}
-            rules={[
-              {
-                required: true,
-                message: 'Bạn cần nhập giá trị',
-              },
-              ({ getFieldValue }) => ({
-                validator(rule, value) {
-                  if (!value || getFieldValue('NewPassword') === value) {
-                    return Promise.resolve();
-                  }
-                  return Promise.reject('Hãy nhập đúng mật khẩu mới!');
-                },
-              }),
-            ]}
-          >
-            <Input.Password iconRender={visible => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)} />
-          </Form.Item>
-
-          <Form.Item>
-            <Button type="primary" shape="round" style={style.button} htmlType="submit">Lưu thay đổi</Button>
-          </Form.Item>
-        </Form>
-      </Card>
-    </MainLayout>
-  )
+        <Form.Item>
+          <Button style={style.btnSubmit} type="primary" htmlType="submit">Đổi mật khẩu</Button>
+        </Form.Item>
+      </Form>
+    </Card>
+  );
 }
+
+export default login;

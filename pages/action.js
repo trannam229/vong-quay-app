@@ -1,7 +1,8 @@
 import axios from '@configs/api-request';
 import { Card, Form, Input, Button, Image, notification } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 import jwt from 'jsonwebtoken';
 import Cookies from 'js-cookie';
 
@@ -10,16 +11,22 @@ function login() {
   localStorage.setItem('unit', 'kim cương');
 
   const route = useRouter();
+  const [isLogin, setIsLogin] = useState(false)
   const onFinish = async (values) => {
     try {
       const res = await axios.post('/login/admin', { ...values, appId: 0 });
+      console.log(res.data);
       Cookies.set('access-token', res.data.accessToken);
+      axios.interceptors.request.use(function (config) {
+        config.headers.common['Authorization'] = `Bearer ${res.data.accessToken}`;
+        return config;
+      });
+
       notification.open({
         type: 'success',
         message: 'Đăng nhập thành công!',
         description: `Chào mừng ${values.username}`,
       });
-
       route.push({ pathname: '/dashboard' })
     } catch (e) {
       notification.open({

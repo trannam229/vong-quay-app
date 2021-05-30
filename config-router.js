@@ -1,88 +1,48 @@
-import { AppstoreOutlined, DollarCircleOutlined, SyncOutlined, UserOutlined, DiffOutlined } from '@ant-design/icons';
+import { AppstoreOutlined, DollarCircleOutlined, CreditCardOutlined, UserOutlined, CheckCircleOutlined, PlayCircleOutlined, UnorderedListOutlined } from '@ant-design/icons';
 
 export default {
   path: '/',
   routes: [
     {
-      path: '/category',
-      name: 'Danh mục',
-      icon: <AppstoreOutlined />,
-      routes: [
-        {
-          path: '/category/dashboard',
-          name: 'Tổng quan',
-        },
-        {
-          path: '/category/account-statement',
-          name: 'Sao kê tài khoản',
-        },
-        {
-          path: '/category/invest-category',
-          name: 'Danh mục đầu tư',
-        },
-        {
-          path: '/category/income-report',
-          name: 'Báo cáo thu nhập',
-        },
-        {
-          path: '/category/processing-category',
-          name: 'Danh mục chờ khớp lệnh',
-        },
-      ],
+      path: '/dashboard',
+      name: 'Thống kê',
+      icon: <DollarCircleOutlined />,
     },
     {
-      path: '/trade',
-      name: 'Giao dịch',
-      icon: <DiffOutlined />,
-      routes: [
-        {
-          path: '/trade/invest',
-          name: 'Đầu tư',
-        },
-        {
-          path: '/trade/sell',
-          name: 'Thoái vốn',
-        }
-      ],
+      path: '/member',
+      name: 'Thành viên',
+      icon: <UnorderedListOutlined />
     },
     {
-      path: '/money',
-      name: 'Tiền',
-      icon: <SyncOutlined />,
+      path: '/card',
+      name: 'Danh sách thẻ nạp',
+      icon: <CreditCardOutlined />,
+    },
+    {
+      path: '/diamond',
+      name: 'Duyệt kim cương',
+      icon: <CheckCircleOutlined />,
+    },
+    {
+      path: '/rotation',
+      name: 'Vòng quay',
+      icon: <PlayCircleOutlined />,
       routes: [
         {
-          path: '/money/deposit',
-          name: 'Nộp tiền',
+          path: '/rotation/list',
+          name: 'Danh sách vòng quay',
         },
         {
-          path: '/money/withdraw',
-          name: 'Rút tiền',
-        },
-
-        {
-          path: '/money/payment',
-          name: 'Lệnh chờ thanh toán',
+          path: '/rotation/new',
+          name: 'Tạo mới vòng quay',
         }
       ]
     },
     {
-      path: '/auto/create/create-auto-invest',
-      name: 'Đầu tư tự động',
-      icon: <DollarCircleOutlined />,
-    },
-    {
       path: '/account',
-      name: 'Tài khoản',
+      name: 'Cá nhân',
       icon: <UserOutlined />,
       routes: [
-        {
-          path: '/account/membership',
-          name: 'Hạng thành viên',
-        },
-        {
-          path: '/account/bonus',
-          name: 'Tiền thưởng',
-        },
         {
           path: '/account/changepassword',
           name: 'Đổi mật khẩu',
@@ -90,8 +50,8 @@ export default {
         {
           path: '/account/logout',
           name: 'Đăng xuất',
-        },
-      ],
+        }
+      ]
     },
   ],
 }

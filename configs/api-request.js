@@ -1,44 +1,48 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import {toast} from 'react-toastify';
+import { notification } from 'antd';
 
 const dev = process.env.NODE_ENV !== "production";
-const url = dev ? "http://localhost:4000/" : "url-server";
-axios.defaults.baseURL = url + "api";
+const url = !dev ? "http://localhost:3000/" : "http://vongquay.shop/";
+axios.defaults.baseURL = !dev ? url + 'api' : url;
+const success = [200, 304];
 
-const options = {
-    autoClose: 5000,
-    hideProgressBar: true,
-    position: toast.POSITION.TOP_CENTER,
-    pauseOnHover: true,
-};
-const accessToken = Cookies.get('access-token');
-if (accessToken) {
-    axios.defaults.headers.Authorization = accessToken;
-}
+axios.interceptors.request.use(function (config) {
+  const accessToken = Cookies.get('access-token');
+  config.headers.common['Authorization'] = `Bearer ${accessToken}`;
+  return config;
+});
 
 axios.interceptors.response.use((res) => {
+  if (res.config.url === '/login/admin' || res.config.method === 'get') return res;
 
+  if (res.config.method !== 'get' && success.indexOf(res.status) >= 0) {
+    console.log('success');
+    notification.open({
+      type: 'success',
+      description: `Thao tác thành công`,
+    });
+  }
 
-    if (res.config.url === '/chart-info') return res;
+  return res;
+}, (error) => {
+  if (error.response.status == '403') {
+    notification.open({
+      type: 'error',
+      description: 'Bạn chưa đăng nhập',
+    });
 
-    if (res.data.Status.Code === '3' || res.status == 403) {
-        Cookies.remove('access_token');
-        window.location.href = url + "login"
-        return
-    }
+    Cookies.remove('access-token');
+    return Promise.reject(error);
+  }
 
-    if (res.config.url !== '/login' && res.config.method === 'post' && res.data.Status.Code === '0') {
-        options.type = toast.TYPE.INFO,
-            toast("Thao tác thành công", options);
-    }
+  notification.open({
+    type: `error ${error.response.status}`,
+    description: error.response.data.message,
+  });
 
-    if (res.data.Status.Code !== '0') {
-        options.type = toast.TYPE.ERROR
-        toast(res.data.Status.Message, options)
-        throw res;
-    }
-    return res;
-});
+  return Promise.reject(error);
+}
+);
 
 export default axios;
