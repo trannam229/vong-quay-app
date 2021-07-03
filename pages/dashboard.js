@@ -2,8 +2,17 @@ import { Card, Descriptions } from 'antd';
 import axios from '@configs/api-request';
 import { useEffect, useState } from 'react';
 import { numberWithCommas } from '@configs/helper';
+import { useRouter } from 'next/router'
+import Cookies from 'js-cookie';
 
 export default function Example() {
+  const route = useRouter();
+  const token = Cookies.get('access-token');
+  if (!token) {
+    console.log('token check');
+    route.push({ pathname: '/login' });
+  }
+
   const [monitoring, setMonitoring] = useState({});
   const [isLoading, setIsLoading] = useState(true);
 
@@ -11,9 +20,12 @@ export default function Example() {
     try {
       const res = await axios.get(`/monitoring`);
       setMonitoring(res.data);
-      setIsLoading(false);
     } catch (e) {
-      console.log(e)
+      if (e.response.status == '403') {
+        route.push({ pathname: '/login' });
+      }
+    } finally {
+      setIsLoading(false);
     }
   }
 

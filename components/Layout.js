@@ -2,7 +2,9 @@ import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import RouterConfigs from "../config-router";
 import { Avatar, Image } from "antd";
-import { LikeOutlined, UserOutlined } from '@ant-design/icons';
+import Cookies from 'js-cookie';
+
+const accessToken = Cookies.get('access-token');
 
 const ProLayout = dynamic(() => import('@ant-design/pro-layout'), {
   ssr: false,
@@ -20,14 +22,25 @@ const menuItemRender = (options, element) => (
   </Link>
 )
 
-const rightContentRender = () => (
+const rightContentRender = () => {
+  const contentLogined = (
+    <>
+      Xin chào admin
+      <Avatar shape="square" className="ml-3"
+        src={<Image src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />}
+      />
+    </>
+  );
+
+  return (
   <div>
-    Xin chào admin
-    <Avatar shape="square" className="ml-3"
-      src={<Image src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />}
-    />
+    {accessToken
+      ? contentLogined
+      : <Link href="/login">ĐĂNG NHẬP</Link>
+    }
+    
   </div>
-)
+)};
 
 export default function Main({ children }) {
   return (

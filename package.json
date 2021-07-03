@@ -10,6 +10,10 @@
   "dependencies": {
     "@ant-design/icons": "4.1.0",
     "@ant-design/pro-layout": "5.0.10",
+    "@fortawesome/fontawesome-svg-core": "^1.2.35",
+    "@fortawesome/free-brands-svg-icons": "^5.15.3",
+    "@fortawesome/free-solid-svg-icons": "^5.15.3",
+    "@fortawesome/react-fontawesome": "^0.1.14",
     "@next/bundle-analyzer": "^9.5.3",
     "@zeit/next-css": "^1.0.1",
     "@zeit/next-less": "^1.0.1",

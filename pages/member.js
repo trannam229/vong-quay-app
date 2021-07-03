@@ -3,6 +3,7 @@ import { server } from '../configs/index';
 import axios from '@configs/api-request';
 import { numberWithCommas } from '@configs/helper';
 import { useEffect, useState } from 'react';
+import moment from 'moment';
 
 export default function Example() {
   const [users, setUsers] = useState([]);
@@ -21,14 +22,28 @@ export default function Example() {
 
   const columns = [
     {
-      title: 'ID',
-      dataIndex: 'id',
-      key: 'id',
+      title: 'Ngày tham gia',
+      key: 'createDate',
+      dataIndex: 'createDate',
+      render: (x) => moment(x).format('DD/MM/YYYY'),
+      sorter: (a, b) => a.createDate - b.createDate,
+      sortDirections: ['descend', 'ascend', 'descend'],
+      defaultSortOrder: 'descend',
     },
     {
       title: 'Username',
       key: 'username',
       dataIndex: 'username',
+      sorter: ({username: a}, { username: b}) => {
+        if (a > b) {
+          return -1;
+        }
+        if (b > a) {
+          return 1;
+        }
+        return 0;
+      },
+      sortDirections: ['descend', 'ascend', 'descend'],
     },
     {
       title: 'Tên đầy đủ',
@@ -44,19 +59,25 @@ export default function Example() {
       title: 'Số tiền đã nạp (VND)',
       dataIndex: 'amount',
       key: 'amount',
-      render: (data) => numberWithCommas(data)
+      render: (data) => numberWithCommas(data),
+      sorter: (a, b) => a.amount - b.amount,
+      sortDirections: ['descend', 'ascend', 'descend'],
     },
     {
       title: 'Số tiền còn lại (VND)',
       dataIndex: 'currentAmount',
       key: 'currentAmount',
-      render: (data) => numberWithCommas(data)
+      render: (data) => numberWithCommas(data),
+      sorter: (a, b) => a.currentAmount - b.currentAmount,
+      sortDirections: ['descend', 'ascend', 'descend'],
     },
     {
       title: 'Tài sản',
       dataIndex: 'diamond',
       key: 'diamond',
-      render: (data) => numberWithCommas(data)
+      render: (data) => numberWithCommas(data),
+      sorter: (a, b) => a.diamond - b.diamond,
+      sortDirections: ['descend', 'ascend', 'descend'],
     },
     // {
     //   title: 'Thao tác',
@@ -69,6 +90,7 @@ export default function Example() {
   return (
     <Card title="Thành viên">
       <Table
+        className="table-striped"
         bordered="true"
         dataSource={users}
         columns={columns}

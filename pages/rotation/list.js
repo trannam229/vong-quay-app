@@ -2,11 +2,14 @@ import { Descriptions, Card, Button, Modal, Table, Image, Switch } from 'antd';
 import axios from '@configs/api-request';
 import { numberWithCommas } from '@configs/helper';
 import { useEffect, useState } from 'react';
+import ButtonConfirm from '../../components/ButtonConfirm';
 
 export default function Example() {
   //Init state
   const [modal, setModal] = useState({ visible: false, modalDatas: null });
   const [listRotation, setlistRotation] = useState([]);
+  const [loading, setLoading] = useState(true);
+
   //Init const data
   const columns = [
     {
@@ -35,7 +38,7 @@ export default function Example() {
       title: 'Ảnh thumbnail',
       key: 'thumbnail',
       dataIndex: 'thumbnail',
-      render: (thumbnail, record) => <Image width={50} src={thumbnail ? `http://vongquay.shop/` + thumbnail : '/treasure.svg'} />
+      render: (thumbnail, record) => <Image width={80} src={thumbnail ? `http://vongquay.shop/` + thumbnail : '/treasure.svg'} />
     },
     {
       title: 'Trạng thái',
@@ -50,7 +53,9 @@ export default function Example() {
       render: (id) => (
         <>
           <Button type="primary" onClick={() => showModal(id)}>Chi tiết</Button>
-          <Button type="danger" className="ml-3" onClick={() => deleteRotation(id)}>Xóa vòng quay</Button>
+          <ButtonConfirm action={() => deleteRotation(id)}>
+            <Button type="danger" className="ml-3" >Xóa vòng quay</Button>
+          </ButtonConfirm>
         </>
       )
     },
@@ -107,12 +112,14 @@ export default function Example() {
     if (!modal.modalDatas) return;
     return (
       <>
-        <Descriptions column={3} layout="horizontal">
+        <Descriptions column={3} title={modal.modalDatas.name} layout="horizontal">
           <Descriptions.Item label="Giá tiền">{numberWithCommas(modal.modalDatas.price) + ' VND/lần' || 'Không xác định'}</Descriptions.Item>
           <Descriptions.Item label="Đơn vị">{modal.modalDatas.unit || 'Không xác định'}</Descriptions.Item>
           <Descriptions.Item label="Trạng thái">{modal.modalDatas.status ? 'Đang hoạt động' : 'Ngừng hoạt động'}</Descriptions.Item>
         </Descriptions>
+
         <Table
+          className="table-striped"
           bordered="true"
           dataSource={modal.modalDatas.createValueJsons}
           columns={columnsDetail}
@@ -129,7 +136,7 @@ export default function Example() {
   const handleOk = async () => {
     setConfirmLoading(true);
     try {
-      await axios.put(`/rotation/${record.id}`, { ...record, status: !status});
+      await axios.put(`/rotation/${record.id}`, { ...record, status: !status });
     } catch (e) {
       setConfirmLoading(false);
       console.log(e);
@@ -138,7 +145,6 @@ export default function Example() {
 
   const switchButton = async (status, record) => {
     try {
-      // await axios.patch(`/rotation/updateStatus?rotationId=${record.id}&status=${status == 0 ? 1 : 0}`, { params: {rotationId: record.id, status: status == 0 ? 1 : 0}});
       await axios.patch(`/rotation/updateStatus?rotationId=${record.id}&status=${status == 0 ? 1 : 0}`);
       fetch();
     } catch (e) {
@@ -165,6 +171,8 @@ export default function Example() {
       setlistRotation(res.data);
     } catch (e) {
       console.log(e)
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -173,8 +181,12 @@ export default function Example() {
 
   return (
     <>
-      <Card title="Vòng quay">
+      <Card
+        title="Vòng quay"
+        loading={loading}
+      >
         <Table
+          className="table-striped"
           bordered="true"
           dataSource={listRotation}
           columns={columns}
@@ -196,14 +208,3 @@ export default function Example() {
     </>
   )
 }
-
-// export const getStaticProps = async () => {
-//   const res = await axios.get(`/rotation/getListRotation`);
-//   const datas = res.data;
-
-//   return {
-//     props: {
-//       datas
-//     }
-//   }
-// }

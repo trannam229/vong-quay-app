@@ -2,11 +2,10 @@ import axios from '@configs/api-request';
 import { Card, Form, Input, Button, Image, notification } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router'
-import jwt from 'jsonwebtoken';
 import Cookies from 'js-cookie';
 
 function login() {
-  localStorage.setItem('appId', 0)
+  localStorage.setItem('appId', 1)
   localStorage.setItem('unit', 'kim cương');
 
   const route = useRouter();

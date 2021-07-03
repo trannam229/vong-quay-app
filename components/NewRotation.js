@@ -1,13 +1,9 @@
-import { PageHeader, Card, Button, Image, Form, Descriptions, Input, InputNumber, Upload, Row, Col } from 'antd';
-import { server } from '../../configs/index';
-import axios from '@configs/api-request';
-import { numberWithCommas } from '@configs/helper';
+import { Image, notification } from 'antd';
 import { useEffect, useState } from 'react';
-import { PlusCircleFilled, UploadOutlined } from '@ant-design/icons';
-import Cookies from 'js-cookie';
-import _, { xor } from 'lodash';
+import axios from '@configs/api-request';
+import _ from 'lodash';
 
-export default function Example() {
+export default function Spin({ rotation }) {
   const appId = localStorage.getItem('appId');
 
   //Style
@@ -57,7 +53,7 @@ export default function Example() {
         return x;
       }));
 
-      await axios.post(`/rotation/create`, {...values, appId: 1});
+      await axios.post(`/rotation/create`, {...values, appId: appId});
     } catch (e) {
       console.log(e)
     }
@@ -79,13 +75,13 @@ export default function Example() {
 
           <Descriptions.Item label="Giá tiền mỗi lần quay">
             <Form.Item name="price" rules={[{ required: true, message: 'Cần nhập thông tin' }]}>
-              <InputNumber style={{width: '100%'}}/>
+              <InputNumber />
             </Form.Item>
           </Descriptions.Item>
 
           <Descriptions.Item label="Ảnh thumbnail">
             <Form.Item name="thumbnail">
-              <Upload maxCount={1} style={{width: '100%'}}>
+              <Upload maxCount={1}>
                 <Button icon={<UploadOutlined />}>Click to Upload</Button>
               </Upload>
             </Form.Item>
